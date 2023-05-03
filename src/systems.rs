@@ -301,18 +301,20 @@ impl GameState {
             if y_dist.abs() < x_dist.abs() {
                 if self.ball.quad.pos.y >= self.bricks[brick].quad.top() {
                     self.ball.dir = Vec2::new(self.ball.dir.x, self.ball.dir.y.abs());
-                } else if self.ball.quad.pos.y <= self.bricks[brick].quad.bottom() {
+                    self.bricks[brick].health -= 1;
+                } else {
                     self.ball.dir = Vec2::new(self.ball.dir.x, -(self.ball.dir.y.abs()));
+                    self.bricks[brick].health -= 1;
                 }
             } else {
                 if self.ball.quad.pos.x >= self.bricks[brick].quad.right() {
                     self.ball.dir = Vec2::new(self.ball.dir.x.abs(), self.ball.dir.y);
-                } else if self.ball.quad.pos.x <= self.bricks[brick].quad.left() {
+                    self.bricks[brick].health -= 1;
+                } else {
                     self.ball.dir = Vec2::new(-(self.ball.dir.x.abs()), self.ball.dir.y);
+                    self.bricks[brick].health -= 1;
                 }
             }
-
-            self.bricks[brick].health -= 1;
 
             if self.bricks[brick].health <= 0 {
                 self.bricks.remove(brick);
