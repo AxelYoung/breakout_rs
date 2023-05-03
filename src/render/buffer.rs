@@ -1,6 +1,6 @@
 use wgpu::util::DeviceExt;
 
-use crate::systems::{Vec2, GameState, SCREEN_SIZE, Quad};
+use crate::systems::{GameState, SCREEN_SIZE, Quad};
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]

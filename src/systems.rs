@@ -1,8 +1,6 @@
 use std::ops::{Mul, AddAssign};
-use std::rc::Rc;
 
 use num::clamp;
-use num::complex::ComplexFloat;
 use rand::Rng;
 use winit::event::*;
 
@@ -159,7 +157,7 @@ impl GameState {
     pub fn new() -> Self {
 
         let player = Entity {
-            quad: Quad::new(Vec2::new(-130, -700), PADDLE_SIZE),
+            quad: Quad::new(Vec2::new(0, -700), PADDLE_SIZE),
             dir: Vec2::zero()
         };
 
@@ -320,7 +318,7 @@ impl GameState {
 
             self.bricks[brick].health -= 1;
 
-            if(self.bricks[brick].health <= 0) {
+            if self.bricks[brick].health <= 0 {
                 self.bricks.remove(brick);
             }
         }
