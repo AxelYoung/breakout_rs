@@ -52,6 +52,19 @@ impl Brick {
             health: rand::thread_rng().gen_range(3..=BRICK_HEATH)
         }
     }
+
+    pub fn top(&self) -> f32 {
+        self.quad.pos.y + (BRICK_SIZE.y / 2.0)
+    }
+    pub fn bottom(&self) -> f32 {
+        self.quad.pos.y - (BRICK_SIZE.y / 2.0)
+    }
+    pub fn right(&self) -> f32 {
+        self.quad.pos.x + (BRICK_SIZE.x / 2.0)
+    }
+    pub fn left(&self) -> f32 {
+        self.quad.pos.x - (BRICK_SIZE.x / 2.0)
+    }
 }
 
 impl Entity {
@@ -146,7 +159,7 @@ impl GameState {
     pub fn new() -> Self {
 
         let player = Entity {
-            quad: Quad::new(Vec2::new(0, -700), PADDLE_SIZE),
+            quad: Quad::new(Vec2::new(-130, -700), PADDLE_SIZE),
             dir: Vec2::zero()
         };
 
@@ -161,13 +174,34 @@ impl GameState {
             Brick::new(-150,125),
             Brick::new(150,125),
             
+            Brick::new(500, 350),
             Brick::new(500,275),
             Brick::new(500,200),
             Brick::new(500,125),
+            Brick::new(500, 50),
 
+            Brick::new(-500, 350),
             Brick::new(-500,275),
             Brick::new(-500,200),
             Brick::new(-500,125),
+            Brick::new(-500, 50),
+
+            Brick::new(-500, 425),
+            Brick::new(-350, 425),
+            Brick::new(-200, 425),
+
+            Brick::new(500, 425),
+            Brick::new(350, 425),
+            Brick::new(200, 425),
+
+            Brick::new(-500, -25),
+            Brick::new(-350, -25),
+            Brick::new(-200, -25),
+
+            Brick::new(500, -25),
+            Brick::new(350, -25),
+            Brick::new(200, -25),
+
         ];
         
         let ball = Entity {
@@ -250,18 +284,39 @@ impl GameState {
         }
 
         if let Some(brick) = self.check_brick_collision() {
-            let x_dist = self.ball.quad.pos.x - self.bricks[brick].quad.pos.x;
-            let y_dist = self.ball.quad.pos.y - self.bricks[brick].quad.pos.y;
 
-            if x_dist > y_dist {
-                self.change_y_dir(y_dist);
-            } else if x_dist < y_dist {
-                self.change_x_dir(x_dist);
+            let x_dist: f32;
+            let y_dist: f32;
+
+            if self.ball.quad.pos.y > self.bricks[brick].quad.pos.y {
+                y_dist = self.ball.quad.pos.y - self.bricks[brick].top();
             } else {
-                self.change_y_dir(y_dist);
-                self.change_x_dir(x_dist);
+                y_dist = self.ball.quad.pos.y - self.bricks[brick].bottom();
             }
 
+            if self.ball.quad.pos.x > self.bricks[brick].quad.pos.x {
+                x_dist = self.ball.quad.pos.x - self.bricks[brick].right();
+            } else {
+                x_dist = self.ball.quad.pos.x - self.bricks[brick].left();
+            }
+
+            if y_dist.abs() < x_dist.abs() {
+                if self.ball.quad.pos.y >= self.bricks[brick].top() {
+                    self.ball.dir = Vec2::new(self.ball.dir.x, self.ball.dir.y.abs());
+                    println!("top");
+                } else if self.ball.quad.pos.y <= self.bricks[brick].bottom() {
+                    self.ball.dir = Vec2::new(self.ball.dir.x, -(self.ball.dir.y.abs()));
+                    println!("bot");
+                }
+            } else {
+                if self.ball.quad.pos.x >= self.bricks[brick].right() {
+                    self.ball.dir = Vec2::new(self.ball.dir.x.abs(), self.ball.dir.y);
+                    println!("right");
+                } else if self.ball.quad.pos.x <= self.bricks[brick].left() {
+                    self.ball.dir = Vec2::new(-(self.ball.dir.x.abs()), self.ball.dir.y);
+                    println!("left");
+                }
+            }
 
             self.bricks[brick].health -= 1;
 
@@ -271,22 +326,6 @@ impl GameState {
         }
 
         self.ball.add_position(self.ball.dir * BALL_SPEED);
-    }
-
-    fn change_y_dir(&mut self, y_dist: f32) {
-        if y_dist >= 0.0 {
-            self.ball.dir = Vec2::new(self.ball.dir.x, self.ball.dir.y.abs());
-        } else {
-            self.ball.dir = Vec2::new(self.ball.dir.x, -(self.ball.dir.y.abs()));
-        }
-    }
-
-    fn change_x_dir(&mut self, x_dist: f32) {
-        if x_dist >= 0.0 {
-            self.ball.dir = Vec2::new(self.ball.dir.x.abs(), self.ball.dir.y);
-        } else {
-            self.ball.dir = Vec2::new(-(self.ball.dir.x.abs()), self.ball.dir.y);
-        }
     }
 
     fn score_keep(&mut self) {
