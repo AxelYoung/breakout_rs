@@ -50,19 +50,6 @@ impl Brick {
             health: rand::thread_rng().gen_range(3..=BRICK_HEATH)
         }
     }
-
-    pub fn top(&self) -> f32 {
-        self.quad.pos.y + (BRICK_SIZE.y / 2.0)
-    }
-    pub fn bottom(&self) -> f32 {
-        self.quad.pos.y - (BRICK_SIZE.y / 2.0)
-    }
-    pub fn right(&self) -> f32 {
-        self.quad.pos.x + (BRICK_SIZE.x / 2.0)
-    }
-    pub fn left(&self) -> f32 {
-        self.quad.pos.x - (BRICK_SIZE.x / 2.0)
-    }
 }
 
 impl Entity {
@@ -93,6 +80,19 @@ impl Quad {
         let half_height = self.size.y / 2.0 + b.size.y / 2.0;
 
         dx < half_width && dy < half_height
+    }
+
+    pub fn top(&self) -> f32 {
+        self.pos.y + (self.size.y / 2.0)
+    }
+    pub fn bottom(&self) -> f32 {
+        self.pos.y - (self.size.y / 2.0)
+    }
+    pub fn right(&self) -> f32 {
+        self.pos.x + (self.size.x / 2.0)
+    }
+    pub fn left(&self) -> f32 {
+        self.pos.x - (self.size.x / 2.0)
     }
 }
 
@@ -287,32 +287,28 @@ impl GameState {
             let y_dist: f32;
 
             if self.ball.quad.pos.y > self.bricks[brick].quad.pos.y {
-                y_dist = self.ball.quad.pos.y - self.bricks[brick].top();
+                y_dist = self.ball.quad.bottom() - self.bricks[brick].quad.top();
             } else {
-                y_dist = self.ball.quad.pos.y - self.bricks[brick].bottom();
+                y_dist = self.ball.quad.top() - self.bricks[brick].quad.bottom();
             }
 
             if self.ball.quad.pos.x > self.bricks[brick].quad.pos.x {
-                x_dist = self.ball.quad.pos.x - self.bricks[brick].right();
+                x_dist = self.ball.quad.left() - self.bricks[brick].quad.right();
             } else {
-                x_dist = self.ball.quad.pos.x - self.bricks[brick].left();
+                x_dist = self.ball.quad.right() - self.bricks[brick].quad.left();
             }
 
             if y_dist.abs() < x_dist.abs() {
-                if self.ball.quad.pos.y >= self.bricks[brick].top() {
+                if self.ball.quad.pos.y >= self.bricks[brick].quad.top() {
                     self.ball.dir = Vec2::new(self.ball.dir.x, self.ball.dir.y.abs());
-                    println!("top");
-                } else if self.ball.quad.pos.y <= self.bricks[brick].bottom() {
+                } else if self.ball.quad.pos.y <= self.bricks[brick].quad.bottom() {
                     self.ball.dir = Vec2::new(self.ball.dir.x, -(self.ball.dir.y.abs()));
-                    println!("bot");
                 }
             } else {
-                if self.ball.quad.pos.x >= self.bricks[brick].right() {
+                if self.ball.quad.pos.x >= self.bricks[brick].quad.right() {
                     self.ball.dir = Vec2::new(self.ball.dir.x.abs(), self.ball.dir.y);
-                    println!("right");
-                } else if self.ball.quad.pos.x <= self.bricks[brick].left() {
+                } else if self.ball.quad.pos.x <= self.bricks[brick].quad.left() {
                     self.ball.dir = Vec2::new(-(self.ball.dir.x.abs()), self.ball.dir.y);
-                    println!("left");
                 }
             }
 
