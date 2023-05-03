@@ -6,8 +6,8 @@ use winit::event::*;
 
 pub const SCREEN_SIZE: Vec2i = Vec2i {x: 800, y: 800};
 
-pub const PADDLE_BOUNDS_MIN: f32 = -SCREEN_SIZE.y as f32 + (PADDLE_SIZE.y / 2.0);
-pub const PADDLE_BOUNDS_MAX: f32 = SCREEN_SIZE.y as f32 - (PADDLE_SIZE.y / 2.0);
+pub const PADDLE_BOUNDS_MIN: f32 = -SCREEN_SIZE.x as f32 + (PADDLE_SIZE.x / 2.0);
+pub const PADDLE_BOUNDS_MAX: f32 = SCREEN_SIZE.x as f32 - (PADDLE_SIZE.x / 2.0);
 
 pub const PADDLE_SIZE: Vec2 = Vec2 {x: 250.0, y: 50.0};
 pub const BRICK_SIZE: Vec2 = Vec2 {x:150.0, y: 75.0};
@@ -237,7 +237,7 @@ impl GameState {
 
     fn paddle_move(paddle: &mut Entity) {
         paddle.add_position(paddle.dir * PADDLE_SPEED);
-        paddle.quad.pos.y = clamp(paddle.quad.pos.y, PADDLE_BOUNDS_MIN, PADDLE_BOUNDS_MAX);
+        paddle.quad.pos.x = clamp(paddle.quad.pos.x, PADDLE_BOUNDS_MIN, PADDLE_BOUNDS_MAX);
     }
 
     fn check_player_collision(&self) -> Option<&Quad> {
